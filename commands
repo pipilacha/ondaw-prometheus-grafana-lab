@@ -1,0 +1,33 @@
+oc create deployment node-exporter1 --port=9100 --image=bitnami/node-exporter:latest
+oc create deployment node-exporter2 --port=9100 --image=bitnami/node-exporter:latest
+oc create deployment node-exporter3 --port=9100 --image=bitnami/node-exporter:latest
+oc expose deploy node-exporter1 --port=9100 --type=ClusterIP
+oc expose deploy node-exporter2 --port=9100 --type=ClusterIP
+oc expose deploy node-exporter3 --port=9100 --type=ClusterIP
+
+oc create configmap prometheus-config \
+   --from-file=prometheus=./config/prometheus.yml \
+   --from-file=prometheus-alerts=./config/alerts.yml
+
+oc apply -f deploy/prometheus-deployment.yaml
+
+oc apply -f deploy/grafana-deployment.yaml
+
+oc apply -f deploy/prometheus-deployment.yaml
+
+oc expose svc grafana
+
+# expose and generate traffic 
+oc expose svc pythonserver
+
+# oc patch command to enable TLS and the https:// protocol for the route.
+oc patch route grafana -p '{"spec":{"tls":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}}'
+
+oc get routes 
+
+oc get pods -l app=grafana
+
+oc describe route grafana | grep "Requested Host:"
+
+# use template id 9688 for flask
+# use template 1806 for node exporter

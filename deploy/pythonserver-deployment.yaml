@@ -1,0 +1,38 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pythonserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pythonserver
+  template:
+    metadata:
+      labels:
+        app: pythonserver
+    spec:
+      containers:
+      - name: pythonserver
+        image: pipilacha/pythonserver
+        ports:
+        - containerPort: 8080
+          name: pythonserver
+          protocol: TCP
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pythonserver
+spec:
+  selector:
+    app: pythonserver
+  type: NodePort
+  ports:
+  - name: pythonserver
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+    # nodePort: 30090

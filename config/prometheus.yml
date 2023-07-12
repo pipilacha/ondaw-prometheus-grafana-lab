@@ -32,3 +32,9 @@ scrape_configs:
       - targets: ['node-exporter3:9100']
         labels:
           group: 'monitoring_node_ex3'
+  
+  - job_name: 'pythonserver'
+    static_configs:
+      - targets: ['pythonserver:8080']
+        labels:
+          group: 'monitoring_pythonserver'
